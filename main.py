@@ -12,8 +12,8 @@ from Preprocessing.Resolution_Resampling import Resolution_Resampling
 
 ROOT = Path(__file__).resolve().parent
 
-SOURCE_PATH = ROOT / "data" / "img" / "ch2_nac_58947656958.png"
-REFERENCE_PATH = ROOT / "data" / "img" / "ch2_nac_58947656958 copy.png"
+SOURCE_PATH = ROOT / "data" / "img_data" / "ohr_lunar_src_1.jpeg"
+REFERENCE_PATH = ROOT / "data" / "img_data" / "nac_lunar_ref_1.png"
 
 
 # ============================================================
@@ -112,10 +112,59 @@ reference_final = intensity_normalization(
 
 print("✓ Intensity normalization complete")
 
+cv2.imwrite(
+    str(ROOT / "source_preprocessed_result.png"),
+    source_final
+)
+
+cv2.imwrite(
+    str(ROOT / "reference_preprocessed_result.png"),
+    reference_final
+)
 
 # ============================================================
 # 6. FINAL OVERLAY
 # ============================================================
+
+
+print("Before overlay:")
+print("  Source:", source_final.shape)
+print("  Reference:", reference_final.shape)
+
+if source_final.shape != reference_final.shape:
+
+    reference_final = cv2.resize(
+        reference_final,
+        (
+            source_final.shape[1],
+            source_final.shape[0]
+        ),
+        interpolation=cv2.INTER_LINEAR
+    )
+
+print("After resizing:")
+print("  Source:", source_final.shape)
+print("  Reference:", reference_final.shape)
+
+final_overlay = cv2.addWeighted(
+    reference_final,
+    0.5,
+    source_final,
+    0.5,
+    0
+)
+
+
+
+
+
+
+
+
+
+
+
+
 
 final_overlay = cv2.addWeighted(
     reference_final,
